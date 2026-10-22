@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CloudGuard AI - Risk Monitoring</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #07111f;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            background: #0b1628;
+            border-right: 1px solid #203452;
+            padding: 25px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 12px 30px;
+            border-bottom: 1px solid #203452;
+        }
+
+        .brand-icon {
+            font-size: 30px;
+        }
+
+        .brand-text h2 {
+            font-size: 19px;
+        }
+
+        .brand-text p {
+            color: #7f91ad;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .menu {
+            margin-top: 25px;
+        }
+
+        .menu-title {
+            color: #657893;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin: 0 12px 12px;
+            letter-spacing: 1px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #9caac0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .menu a:hover {
+            background: #12223a;
+            color: #ffffff;
+        }
+
+        .menu a.active {
+            background: #17345c;
+            color: #4d9aff;
+        }
+
+        .menu-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .system-status {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            right: 20px;
+            background: #0f2035;
+            border: 1px solid #1d3858;
+            border-radius: 10px;
+            padding: 13px;
+        }
+
+        .system-status p {
+            font-size: 11px;
+            color: #7e91ad;
+        }
+
+        .status-line {
+            margin-top: 7px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: #53e39a;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            background: #53e39a;
+            border-radius: 50%;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 25px 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: #8293ac;
+            font-size: 13px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification {
+            width: 38px;
+            height: 38px;
+            border: 1px solid #243b5c;
+            background: #0c192d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .admin {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #245da8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .admin-text {
+            font-size: 12px;
+        }
+
+        .admin-text span {
+            display: block;
+            color: #71839e;
+            margin-top: 3px;
+            font-size: 10px;
+        }
+
+        /* SUMMARY CARDS */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: #0c192d;
+            border: 1px solid #203452;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .summary-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-label {
+            color: #8b9bb3;
+            font-size: 12px;
+        }
+
+        .summary-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #142944;
+        }
+
+        .summary-number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 12px;
+        }
+
+        .summary-change {
+            margin-top: 8px;
+            color: #71839d;
+            font-size: 11px;
+        }
+
+        .critical-number {
+            color: #ff5964;
+        }
+
+        .high-number {
+            color: #ff9d4d;
+        }
+
+        .medium-number {
+            color: #f1c75b;
+        }
+
+        .low-number {
+            color: #53d79a;
+        }
+
+        /* FILTER BAR */
+
+        .filter-bar {
+            background: #0c192d;
+            border: 1px solid #203452;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 11px 13px;
+            background: #081323;
+            border: 1px solid #263d5d;
+            border-radius: 7px;
+            color: white;
+            outline: none;
+        }
+
+        .filter-select {
+            padding: 11px 14px;
+            background: #081323;
+            border: 1px solid #263d5d;
+            border-radius: 7px;
+            color: #b9c5d8;
+            outline: none;
+        }
+
+        .scan-btn {
+            padding: 11px 17px;
+            border: none;
+            border-radius: 7px;
+            background: #2878ff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .scan-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* TABLE */
+
+        .table-card {
+            background: #0c192d;
+            border: 1px solid #203452;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #203452;
+        }
+
+        .table-header h2 {
+            font-size: 17px;
+        }
+
+        .table-header p {
+            color: #71839e;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            color: #71839e;
+            font-size: 11px;
+            font-weight: normal;
+            padding: 14px 20px;
+            background: #0a1627;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 16px 20px;
+            border-top: 1px solid #192c47;
+            font-size: 12px;
+            color: #d3dceb;
+        }
+
+        tr:hover {
+            background: #0f2035;
+        }
+
+        .risk-name {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .risk-id {
+            color: #60728c;
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .severity {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .critical {
+            background: rgba(255, 70, 80, 0.13);
+            color: #ff626b;
+            border: 1px solid rgba(255, 70, 80, 0.25);
+        }
+
+        .high {
+            background: rgba(255, 145, 50, 0.13);
+            color: #ffa04f;
+            border: 1px solid rgba(255, 145, 50, 0.25);
+        }
+
+        .medium {
+            background: rgba(244, 196, 67, 0.13);
+            color: #e8c357;
+            border: 1px solid rgba(244, 196, 67, 0.25);
+        }
+
+        .low {
+            background: rgba(65, 210, 140, 0.13);
+            color: #57d99a;
+            border: 1px solid rgba(65, 210, 140, 0.25);
+        }
+
+        .risk-score {
+            font-weight: bold;
+        }
+
+        .score-critical {
+            color: #ff5964;
+        }
+
+        .score-high {
+            color: #ff9d4d;
+        }
+
+        .score-medium {
+            color: #f1c75b;
+        }
+
+        .score-low {
+            color: #53d79a;
+        }
+
+        .status {
+            color: #d4dceb;
+        }
+
+        .status.pending {
+            color: #f0c95d;
+        }
+
+        .status.resolved {
+            color: #54d99a;
+        }
+
+        .view-btn {
+            padding: 7px 11px;
+            border: 1px solid #2c4668;
+            background: #10213a;
+            color: #8fbaff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .view-btn:hover {
+            background: #17345c;
+        }
+
+        /* AI PANEL */
+
+        .ai-panel {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #101f37, #0c192d);
+            border: 1px solid #2b4c78;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .ai-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #193967;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .ai-header h3 {
+            font-size: 16px;
+        }
+
+        .ai-header p {
+            color: #7d91ad;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .ai-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .ai-box {
+            background: #0a1627;
+            border: 1px solid #1e3554;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .ai-box-title {
+            color: #7590b0;
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .ai-box-value {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #d6deeb;
+        }
+
+        .prediction-up {
+            color: #ff8e69;
+            font-weight: bold;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1100px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .ai-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 8px;
+            }
+
+            .brand-text,
+            .menu-title,
+            .menu a span,
+            .system-status {
+                display: none;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0 0 20px;
+            }
+
+            .menu a {
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 20px;
+            }
+
+            .filter-bar {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            table {
+                min-width: 850px;
+            }
+
+            .table-card {
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .admin-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">🛡️</div>
+
+            <div class="brand-text">
+                <h2>CloudGuard AI</h2>
+                <p>INTELLIGENT CLOUD SECURITY</p>
+            </div>
+        </div>
+
+        <div class="menu">
+
+            <div class="menu-title">Main Menu</div>
+
+            <a href="/dashboard">
+                <div class="menu-icon">📊</div>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/resources">
+                <div class="menu-icon">☁️</div>
+                <span>Resources</span>
+            </a>
+
+            <a href="/risks" class="active">
+                <div class="menu-icon">⚠️</div>
+                <span>Risk Monitoring</span>
+            </a>
+
+            <a href="/ai-analysis">
+                <div class="menu-icon">🤖</div>
+                <span>AI Analysis</span>
+            </a>
+
+            <a href="/compliance">
+                <div class="menu-icon">✓</div>
+                <span>Compliance</span>
+            </a>
+
+            <a href="/remediation">
+                <div class="menu-icon">🔧</div>
+                <span>Remediation</span>
+            </a>
+
+            <div class="menu-title" style="margin-top:25px;">
+                Management
+            </div>
+
+            <a href="/reports">
+                <div class="menu-icon">📄</div>
+                <span>Reports</span>
+            </a>
+
+            <a href="/audit">
+                <div class="menu-icon">📋</div>
+                <span>Audit Logs</span>
+            </a>
+
+            <a href="/">
+                <div class="menu-icon">🚪</div>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+        <div class="system-status">
+
+            <p>PLATFORM STATUS</p>
+
+            <div class="status-line">
+                <div class="status-dot"></div>
+                All Systems Operational
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <div class="topbar">
+
+            <div class="page-title">
+                <h1>Risk Monitoring</h1>
+                <p>Detect, classify and monitor cloud security risks</p>
+            </div>
+
+            <div class="top-actions">
+
+                <div class="notification">
+                    🔔
+                </div>
+
+                <div class="admin">
+
+                    <div class="avatar">
+                        A
+                    </div>
+
+                    <div class="admin-text">
+                        Admin
+                        <span>Security Administrator</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+
+                    <div class="summary-label">
+                        Total Risks
+                    </div>
+
+                    <div class="summary-icon">
+                        ⚠️
+                    </div>
+
+                </div>
+
+                <div class="summary-number">
+                    15
+                </div>
+
+                <div class="summary-change">
+                    Active security findings
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+
+                    <div class="summary-label">
+                        Critical Risks
+                    </div>
+
+                    <div class="summary-icon">
+                        🔴
+                    </div>
+
+                </div>
+
+                <div class="summary-number critical-number">
+                    03
+                </div>
+
+                <div class="summary-change">
+                    Immediate action required
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+
+                    <div class="summary-label">
+                        High Risks
+                    </div>
+
+                    <div class="summary-icon">
+                        🟠
+                    </div>
+
+                </div>
+
+                <div class="summary-number high-number">
+                    07
+                </div>
+
+                <div class="summary-change">
+                    Priority remediation
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-top">
+
+                    <div class="summary-label">
+                        Resolved
+                    </div>
+
+                    <div class="summary-icon">
+                        ✅
+                    </div>
+
+                </div>
+
+                <div class="summary-number low-number">
+                    21
+                </div>
+
+                <div class="summary-change">
+                    Risks successfully handled
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FILTER -->
+
+        <div class="filter-bar">
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    placeholder="Search risks, resources or risk IDs..."
+                >
+
+            </div>
+
+            <select class="filter-select">
+
+                <option>All Severity</option>
+                <option>Critical</option>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+
+            </select>
+
+            <select class="filter-select">
+
+                <option>All Status</option>
+                <option>Open</option>
+                <option>Pending</option>
+                <option>Resolved</option>
+
+            </select>
+
+            <button class="scan-btn">
+                🔍 Scan Now
+            </button>
+
+        </div>
+
+
+        <!-- RISK TABLE -->
+
+        <div class="table-card">
+
+            <div class="table-header">
+
+                <div>
+                    <h2>Detected Security Risks</h2>
+                    <p>Latest findings from CloudGuard AI security scans</p>
+                </div>
+
+            </div>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Risk</th>
+                        <th>Resource</th>
+                        <th>Severity</th>
+                        <th>Risk Score</th>
+                        <th>Detected</th>
+                        <th>Status</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            <div class="risk-name">
+                                Public Storage Bucket
+                            </div>
+
+                            <div class="risk-id">
+                                RISK-001
+                            </div>
+                        </td>
+
+                        <td>
+                            storage-prod-01
+                        </td>
+
+                        <td>
+                            <span class="severity critical">
+                                CRITICAL
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="risk-score score-critical">
+                                95/100
+                            </span>
+                        </td>
+
+                        <td>
+                            22 Oct 2026
+                        </td>
+
+                        <td>
+                            <span class="status pending">
+                                Pending
+                            </span>
+                        </td>
+
+                        <td>
+                            <button class="view-btn">
+                                View
+                            </button>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <div class="risk-name">
+                                Excessive IAM Permission
+                            </div>
+
+                            <div class="risk-id">
+                                RISK-002
+                            </div>
+                        </td>
+
+                        <td>
+                            identity-service
+                        </td>
+
+                        <td>
+                            <span class="severity high">
+                                HIGH
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="risk-score score-high">
+                                82/100
+                            </span>
+                        </td>
+
+                        <td>
+                            22 Oct 2026
+                        </td>
+
+                        <td>
+                            <span class="status">
+                                Open
+                            </span>
+                        </td>
+
+                        <td>
+                            <button class="view-btn">
+                                View
+                            </button>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <div class="risk-name">
+                                Weak Password Policy
+                            </div>
+
+                            <div class="risk-id">
+                                RISK-003
+                            </div>
+                        </td>
+
+                        <td>
+                            vm-production-03
+                        </td>
+
+                        <td>
+                            <span class="severity high">
+                                HIGH
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="risk-score score-high">
+                                78/100
+                            </span>
+                        </td>
+
+                        <td>
+                            21 Oct 2026
+                        </td>
+
+                        <td>
+                            <span class="status">
+                                Open
+                            </span>
+                        </td>
+
+                        <td>
+                            <button class="view-btn">
+                                View
+                            </button>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <div class="risk-name">
+                                Logging Disabled
+                            </div>
+
+                            <div class="risk-id">
+                                RISK-004
+                            </div>
+                        </td>
+
+                        <td>
+                            network-prod-01
+                        </td>
+
+                        <td>
+                            <span class="severity medium">
+                                MEDIUM
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="risk-score score-medium">
+                                61/100
+                            </span>
+                        </td>
+
+                        <td>
+                            21 Oct 2026
+                        </td>
+
+                        <td>
+                            <span class="status pending">
+                                Pending
+                            </span>
+                        </td>
+
+                        <td>
+                            <button class="view-btn">
+                                View
+                            </button>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <div class="risk-name">
+                                Backup Encryption Disabled
+                            </div>
+
+                            <div class="risk-id">
+                                RISK-005
+                            </div>
+                        </td>
+
+                        <td>
+                            backup-service
+                        </td>
+
+                        <td>
+                            <span class="severity medium">
+                                MEDIUM
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="risk-score score-medium">
+                                54/100
+                            </span>
+                        </td>
+
+                        <td>
+                            20 Oct 2026
+                        </td>
+
+                        <td>
+                            <span class="status resolved">
+                                Resolved
+                            </span>
+                        </td>
+
+                        <td>
+                            <button class="view-btn">
+                                View
+                            </button>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <div class="risk-name">
+                                Unrestricted Network Port
+                            </div>
+
+                            <div class="risk-id">
+                                RISK-006
+                            </div>
+                        </td>
+
+                        <td>
+                            vm-production-03
+                        </td>
+
+                        <td>
+                            <span class="severity critical">
+                                CRITICAL
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="risk-score score-critical">
+                                91/100
+                            </span>
+                        </td>
+
+                        <td>
+                            20 Oct 2026
+                        </td>
+
+                        <td>
+                            <span class="status pending">
+                                Pending
+                            </span>
+                        </td>
+
+                        <td>
+                            <button class="view-btn">
+                                View
+                            </button>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- AI RISK ANALYSIS -->
+
+        <div class="ai-panel">
+
+            <div class="ai-header">
+
+                <div class="ai-icon">
+                    🤖
+                </div>
+
+                <div>
+                    <h3>AI Risk Intelligence</h3>
+
+                    <p>
+                        CloudGuard AI automatically analyzes detected risks
+                        and predicts future security impact.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="ai-content">
+
+                <div class="ai-box">
+
+                    <div class="ai-box-title">
+                        Current Threat
+                    </div>
+
+                    <div class="ai-box-value">
+                        Public storage exposure has the highest
+                        potential impact among current findings.
+                    </div>
+
+                </div>
+
+
+                <div class="ai-box">
+
+                    <div class="ai-box-title">
+                        Risk Prediction
+                    </div>
+
+                    <div class="ai-box-value">
+                        Probability of increased cloud risk:
+                        <span class="prediction-up">
+                            +18%
+                        </span>
+                        if critical findings remain unresolved.
+                    </div>
+
+                </div>
+
+
+                <div class="ai-box">
+
+                    <div class="ai-box-title">
+                        Recommended Action
+                    </div>
+
+                    <div class="ai-box-value">
+                        Restrict public access, review IAM permissions
+                        and enable security logging.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

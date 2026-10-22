@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CloudGuard AI - Login</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #07111f, #101b35, #07111f);
+            color: white;
+        }
+
+        .login-container {
+            width: 420px;
+            padding: 40px;
+            background: rgba(18, 28, 50, 0.95);
+            border: 1px solid #263a61;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #9caac5;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .security-status {
+            text-align: center;
+            background: rgba(35, 180, 110, 0.12);
+            border: 1px solid rgba(35, 180, 110, 0.3);
+            color: #55e69b;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 13px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #dce5f5;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #304363;
+            border-radius: 9px;
+            background: #0b1427;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #4d8dff;
+            box-shadow: 0 0 0 2px rgba(77, 141, 255, 0.15);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(90deg, #2878ff, #4c9aff);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .login-btn:hover {
+            opacity: 0.9;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #72809b;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .footer span {
+            color: #4d9aff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="logo">🛡️</div>
+
+        <div class="title">
+            CloudGuard AI
+        </div>
+
+        <div class="subtitle">
+            Intelligent Cloud Security Platform
+        </div>
+
+        <div class="security-status">
+            ● Secure Authentication Gateway
+        </div>
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="login-btn">
+                Login Securely
+            </button>
+
+        </form>
+
+        <div class="footer">
+            AI-Powered Cloud Security & Risk Management
+            <br>
+            <span>CloudGuard AI © 2026</span>
+        </div>
+
+    </div>
+
+</body>
+</html>

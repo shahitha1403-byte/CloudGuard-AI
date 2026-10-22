@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CloudGuard AI - Backup & Recovery</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 20px 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .header p {
+            margin-top: 5px;
+            color: #cbd5e1;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 25px;
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h3 {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .status {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #16a34a;
+        }
+
+        .info {
+            color: #2563eb;
+        }
+
+        .warning {
+            color: #d97706;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+        }
+
+        .backup-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .backup-item:last-child {
+            border-bottom: none;
+        }
+
+        .backup-name {
+            font-weight: bold;
+        }
+
+        .backup-status {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            background: #2563eb;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .button.secondary {
+            background: #475569;
+        }
+
+        .button.success-button {
+            background: #16a34a;
+        }
+
+        .footer-note {
+            margin-top: 25px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🛡️ CloudGuard AI</h1>
+        <p>Backup & Recovery Management</p>
+    </div>
+
+    <div class="container">
+
+        <a href="/dashboard" class="back">← Back to Dashboard</a>
+
+        <div class="grid">
+
+            <div class="card">
+                <h3>Automatic Backup</h3>
+                <div class="status success">ENABLED</div>
+            </div>
+
+            <div class="card">
+                <h3>Backup Integrity</h3>
+                <div class="status success">VALID</div>
+            </div>
+
+            <div class="card">
+                <h3>Recovery System</h3>
+                <div class="status info">READY</div>
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <h2>💾 Available Database Backups</h2>
+
+            {% if backups %}
+
+                {% for backup in backups %}
+
+                <div class="backup-item">
+
+                    <div>
+                        <div class="backup-name">
+                            {{ backup.name }}
+                        </div>
+
+                        {% if backup.created_at %}
+                        <small>
+                            Created: {{ backup.created_at }}
+                        </small>
+                        {% endif %}
+                    </div>
+
+                    <div class="backup-status">
+                        ✓ VALID
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="backup-item">
+                    <div class="backup-name">
+                        No backups found
+                    </div>
+
+                    <div class="backup-status">
+                        —
+                    </div>
+                </div>
+
+            {% endif %}
+
+            <div class="actions">
+
+                <a href="/dashboard" class="button secondary">
+                    Dashboard
+                </a>
+
+                <a href="/reports" class="button">
+                    View Reports
+                </a>
+
+                <a href="/audit" class="button success-button">
+                    View Audit Logs
+                </a>
+
+            </div>
+
+            <p class="footer-note">
+                CloudGuard AI automatically protects the security database
+                through verified backup and recovery mechanisms.
+            </p>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

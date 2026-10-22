@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CloudGuard AI - Compliance</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #07111f;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            background: #0b1628;
+            border-right: 1px solid #203452;
+            padding: 25px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 12px 30px;
+            border-bottom: 1px solid #203452;
+        }
+
+        .brand-icon {
+            font-size: 30px;
+        }
+
+        .brand-text h2 {
+            font-size: 19px;
+        }
+
+        .brand-text p {
+            color: #7f91ad;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .menu {
+            margin-top: 25px;
+        }
+
+        .menu-title {
+            color: #657893;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin: 0 12px 12px;
+            letter-spacing: 1px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #9caac0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .menu a:hover {
+            background: #12223a;
+            color: white;
+        }
+
+        .menu a.active {
+            background: #17345c;
+            color: #4d9aff;
+        }
+
+        .menu-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .system-status {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            right: 20px;
+            background: #0f2035;
+            border: 1px solid #1d3858;
+            border-radius: 10px;
+            padding: 13px;
+        }
+
+        .system-status p {
+            font-size: 11px;
+            color: #7e91ad;
+        }
+
+        .status-line {
+            margin-top: 7px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: #53e39a;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            background: #53e39a;
+            border-radius: 50%;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 25px 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: #8293ac;
+            font-size: 13px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification {
+            width: 38px;
+            height: 38px;
+            border: 1px solid #243b5c;
+            background: #0c192d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #245da8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .admin-text {
+            font-size: 12px;
+        }
+
+        .admin-text span {
+            display: block;
+            color: #71839e;
+            margin-top: 3px;
+            font-size: 10px;
+        }
+
+        /* OVERVIEW */
+
+        .overview {
+            background: linear-gradient(135deg, #102746, #0c192d);
+            border: 1px solid #294d7d;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .overview-left h2 {
+            font-size: 18px;
+            margin-bottom: 7px;
+        }
+
+        .overview-left p {
+            color: #8194ae;
+            font-size: 12px;
+            max-width: 650px;
+            line-height: 1.6;
+        }
+
+        .scan-button {
+            border: none;
+            background: #2878ff;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .scan-button:hover {
+            opacity: .9;
+        }
+
+        /* SCORE */
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .score-card {
+            background: #0c192d;
+            border: 1px solid #203452;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .score-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .score-card h3 {
+            font-size: 14px;
+        }
+
+        .framework {
+            color: #70849f;
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .score-badge {
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        .compliant {
+            color: #55db99;
+            background: rgba(60, 210, 140, .12);
+            border: 1px solid rgba(60, 210, 140, .25);
+        }
+
+        .review {
+            color: #f0c75c;
+            background: rgba(240, 199, 92, .12);
+            border: 1px solid rgba(240, 199, 92, .25);
+        }
+
+        .score-number {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .score-number.green {
+            color: #55d99a;
+        }
+
+        .score-number.yellow {
+            color: #f0c75c;
+        }
+
+        .score-bar {
+            height: 8px;
+            background: #182940;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .fill-green {
+            background: #4fd695;
+        }
+
+        .fill-yellow {
+            background: #e9c35d;
+        }
+
+        .score-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #687b95;
+            font-size: 10px;
+            margin-top: 7px;
+        }
+
+        /* CONTROL PANEL */
+
+        .panel {
+            background: #0c192d;
+            border: 1px solid #203452;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #203452;
+        }
+
+        .panel-header h2 {
+            font-size: 16px;
+        }
+
+        .panel-header p {
+            color: #71849f;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .controls {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .controls th {
+            text-align: left;
+            padding: 13px 20px;
+            color: #71849f;
+            background: #0a1627;
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+
+        .controls td {
+            padding: 15px 20px;
+            border-top: 1px solid #192c47;
+            font-size: 11px;
+            color: #cbd5e4;
+        }
+
+        .controls tr:hover {
+            background: #0f2035;
+        }
+
+        .control-id {
+            color: #5f9fff;
+            font-weight: bold;
+        }
+
+        .pass {
+            color: #54d99a;
+            font-weight: bold;
+        }
+
+        .fail {
+            color: #ff6871;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #f0c75c;
+            font-weight: bold;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 9px;
+        }
+
+        .pass-pill {
+            color: #54d99a;
+            background: rgba(70, 215, 150, .1);
+        }
+
+        .fail-pill {
+            color: #ff6871;
+            background: rgba(255, 90, 100, .1);
+        }
+
+        .review-pill {
+            color: #f0c75c;
+            background: rgba(240, 199, 92, .1);
+        }
+
+        /* LOWER GRID */
+
+        .lower-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .findings {
+            padding: 20px;
+        }
+
+        .finding {
+            display: flex;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid #1b2e49;
+        }
+
+        .finding:last-child {
+            border-bottom: none;
+        }
+
+        .finding-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .finding-icon.red {
+            background: rgba(255, 90, 100, .12);
+        }
+
+        .finding-icon.yellow {
+            background: rgba(240, 199, 92, .12);
+        }
+
+        .finding h4 {
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .finding p {
+            color: #70829c;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        /* POSTURE */
+
+        .posture {
+            padding: 20px;
+        }
+
+        .posture-score {
+            text-align: center;
+            margin: 8px 0 20px;
+        }
+
+        .posture-circle {
+            width: 125px;
+            height: 125px;
+            border-radius: 50%;
+            border: 10px solid #53d798;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #091626;
+        }
+
+        .posture-number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #54d99a;
+        }
+
+        .posture-label {
+            color: #70829b;
+            font-size: 9px;
+        }
+
+        .posture-level {
+            color: #55d99a;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .posture-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #1b2e49;
+            font-size: 11px;
+        }
+
+        .posture-row span:first-child {
+            color: #8798ae;
+        }
+
+        .posture-row span:last-child {
+            color: #d5deea;
+            font-weight: bold;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1050px) {
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .lower-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 15px 8px;
+            }
+
+            .brand-text,
+            .menu-title,
+            .menu a span,
+            .system-status {
+                display: none;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0 0 20px;
+            }
+
+            .menu a {
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 20px;
+            }
+
+            .overview {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .panel {
+                overflow-x: auto;
+            }
+
+            .controls {
+                min-width: 750px;
+            }
+        }
+
+        @media (max-width: 550px) {
+
+            .overview {
+                flex-direction: column;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .admin-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🛡️
+            </div>
+
+            <div class="brand-text">
+
+                <h2>CloudGuard AI</h2>
+
+                <p>
+                    INTELLIGENT CLOUD SECURITY
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="menu">
+
+            <div class="menu-title">
+                Main Menu
+            </div>
+
+            <a href="/dashboard">
+                <div class="menu-icon">📊</div>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/resources">
+                <div class="menu-icon">☁️</div>
+                <span>Resources</span>
+            </a>
+
+            <a href="/risks">
+                <div class="menu-icon">⚠️</div>
+                <span>Risk Monitoring</span>
+            </a>
+
+            <a href="/ai-analysis">
+                <div class="menu-icon">🤖</div>
+                <span>AI Analysis</span>
+            </a>
+
+            <a href="/compliance" class="active">
+                <div class="menu-icon">✓</div>
+                <span>Compliance</span>
+            </a>
+
+            <a href="/remediation">
+                <div class="menu-icon">🔧</div>
+                <span>Remediation</span>
+            </a>
+
+
+            <div class="menu-title" style="margin-top:25px;">
+                Management
+            </div>
+
+            <a href="/reports">
+                <div class="menu-icon">📄</div>
+                <span>Reports</span>
+            </a>
+
+            <a href="/audit">
+                <div class="menu-icon">📋</div>
+                <span>Audit Logs</span>
+            </a>
+
+            <a href="/">
+                <div class="menu-icon">🚪</div>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+
+        <div class="system-status">
+
+            <p>
+                PLATFORM STATUS
+            </p>
+
+            <div class="status-line">
+
+                <div class="status-dot"></div>
+
+                All Systems Operational
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <div class="topbar">
+
+            <div class="page-title">
+
+                <h1>
+                    Compliance Center
+                </h1>
+
+                <p>
+                    Monitor cloud security compliance and control status
+                </p>
+
+            </div>
+
+
+            <div class="top-actions">
+
+                <div class="notification">
+                    🔔
+                </div>
+
+                <div class="admin">
+
+                    <div class="avatar">
+                        A
+                    </div>
+
+                    <div class="admin-text">
+
+                        Admin
+
+                        <span>
+                            Security Administrator
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- OVERVIEW -->
+
+        <div class="overview">
+
+            <div class="overview-left">
+
+                <h2>
+                    🛡️ Cloud Security Compliance Assessment
+                </h2>
+
+                <p>
+                    CloudGuard AI continuously evaluates cloud resources
+                    against security frameworks and identifies controls
+                    that require attention.
+                </p>
+
+            </div>
+
+            <button class="scan-button">
+                🔍 Run Compliance Scan
+            </button>
+
+        </div>
+
+
+        <!-- FRAMEWORK SCORES -->
+
+        <div class="score-grid">
+
+
+            <!-- CIS -->
+
+            <div class="score-card">
+
+                <div class="score-card-top">
+
+                    <div>
+
+                        <h3>
+                            CIS Controls
+                        </h3>
+
+                        <div class="framework">
+                            Center for Internet Security
+                        </div>
+
+                    </div>
+
+                    <span class="score-badge compliant">
+                        COMPLIANT
+                    </span>
+
+                </div>
+
+                <div class="score-number green">
+                    88%
+                </div>
+
+                <div class="score-bar">
+
+                    <div
+                        class="score-fill fill-green"
+                        style="width:88%;">
+                    </div>
+
+                </div>
+
+                <div class="score-meta">
+
+                    <span>
+                        22 Passed
+                    </span>
+
+                    <span>
+                        3 Failed
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ISO -->
+
+            <div class="score-card">
+
+                <div class="score-card-top">
+
+                    <div>
+
+                        <h3>
+                            ISO 27001
+                        </h3>
+
+                        <div class="framework">
+                            Information Security Management
+                        </div>
+
+                    </div>
+
+                    <span class="score-badge compliant">
+                        COMPLIANT
+                    </span>
+
+                </div>
+
+                <div class="score-number green">
+                    91%
+                </div>
+
+                <div class="score-bar">
+
+                    <div
+                        class="score-fill fill-green"
+                        style="width:91%;">
+                    </div>
+
+                </div>
+
+                <div class="score-meta">
+
+                    <span>
+                        31 Passed
+                    </span>
+
+                    <span>
+                        3 Failed
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- GDPR -->
+
+            <div class="score-card">
+
+                <div class="score-card-top">
+
+                    <div>
+
+                        <h3>
+                            GDPR
+                        </h3>
+
+                        <div class="framework">
+                            Data Protection Regulation
+                        </div>
+
+                    </div>
+
+                    <span class="score-badge review">
+                        REVIEW
+                    </span>
+
+                </div>
+
+                <div class="score-number yellow">
+                    76%
+                </div>
+
+                <div class="score-bar">
+
+                    <div
+                        class="score-fill fill-yellow"
+                        style="width:76%;">
+                    </div>
+
+                </div>
+
+                <div class="score-meta">
+
+                    <span>
+                        19 Passed
+                    </span>
+
+                    <span>
+                        6 Review
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTROLS -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    Compliance Control Assessment
+                </h2>
+
+                <p>
+                    Current security control evaluation
+                </p>
+
+            </div>
+
+
+            <table class="controls">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Control ID
+                        </th>
+
+                        <th>
+                            Security Control
+                        </th>
+
+                        <th>
+                            Framework
+                        </th>
+
+                        <th>
+                            Resource
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Last Check
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td class="control-id">
+                            CIS-01
+                        </td>
+
+                        <td>
+                            Inventory of cloud resources
+                        </td>
+
+                        <td>
+                            CIS
+                        </td>
+
+                        <td>
+                            All Resources
+                        </td>
+
+                        <td>
+                            <span class="status-pill pass-pill">
+                                PASSED
+                            </span>
+                        </td>
+
+                        <td class="pass">
+                            22 Oct 2026
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="control-id">
+                            CIS-04
+                        </td>
+
+                        <td>
+                            Secure configuration management
+                        </td>
+
+                        <td>
+                            CIS
+                        </td>
+
+                        <td>
+                            Cloud Environment
+                        </td>
+
+                        <td>
+                            <span class="status-pill pass-pill">
+                                PASSED
+                            </span>
+                        </td>
+
+                        <td class="pass">
+                            22 Oct 2026
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="control-id">
+                            CIS-06
+                        </td>
+
+                        <td>
+                            Access control and permissions
+                        </td>
+
+                        <td>
+                            CIS
+                        </td>
+
+                        <td>
+                            identity-service
+                        </td>
+
+                        <td>
+                            <span class="status-pill fail-pill">
+                                FAILED
+                            </span>
+                        </td>
+
+                        <td class="fail">
+                            Action Required
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="control-id">
+                            ISO-A.8
+                        </td>
+
+                        <td>
+                            Asset management
+                        </td>
+
+                        <td>
+                            ISO 27001
+                        </td>
+
+                        <td>
+                            Cloud Resources
+                        </td>
+
+                        <td>
+                            <span class="status-pill pass-pill">
+                                PASSED
+                            </span>
+                        </td>
+
+                        <td class="pass">
+                            22 Oct 2026
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="control-id">
+                            ISO-A.9
+                        </td>
+
+                        <td>
+                            Access control
+                        </td>
+
+                        <td>
+                            ISO 27001
+                        </td>
+
+                        <td>
+                            IAM Service
+                        </td>
+
+                        <td>
+                            <span class="status-pill fail-pill">
+                                FAILED
+                            </span>
+                        </td>
+
+                        <td class="fail">
+                            Action Required
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="control-id">
+                            GDPR-32
+                        </td>
+
+                        <td>
+                            Security of processing
+                        </td>
+
+                        <td>
+                            GDPR
+                        </td>
+
+                        <td>
+                            storage-prod-01
+                        </td>
+
+                        <td>
+                            <span class="status-pill review-pill">
+                                REVIEW
+                            </span>
+                        </td>
+
+                        <td class="warning">
+                            Review Required
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="control-id">
+                            GDPR-33
+                        </td>
+
+                        <td>
+                            Data breach protection
+                        </td>
+
+                        <td>
+                            GDPR
+                        </td>
+
+                        <td>
+                            Security Monitoring
+                        </td>
+
+                        <td>
+                            <span class="status-pill pass-pill">
+                                PASSED
+                            </span>
+                        </td>
+
+                        <td class="pass">
+                            22 Oct 2026
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- LOWER SECTION -->
+
+        <div class="lower-grid">
+
+
+            <!-- FINDINGS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Compliance Findings
+                    </h2>
+
+                    <p>
+                        Controls requiring security attention
+                    </p>
+
+                </div>
+
+
+                <div class="findings">
+
+
+                    <div class="finding">
+
+                        <div class="finding-icon red">
+                            ⚠️
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                Excessive IAM Permissions
+                            </h4>
+
+                            <p>
+                                Identity service contains permissions
+                                beyond the recommended least-privilege
+                                configuration.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="finding">
+
+                        <div class="finding-icon red">
+                            🔓
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                Public Storage Exposure
+                            </h4>
+
+                            <p>
+                                Storage resource violates access-control
+                                requirements and requires immediate review.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="finding">
+
+                        <div class="finding-icon yellow">
+                            📋
+                        </div>
+
+                        <div>
+
+                            <h4>
+                                Data Protection Review
+                            </h4>
+
+                            <p>
+                                GDPR-related data protection controls need
+                                additional verification.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- POSTURE -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Security Posture
+                    </h2>
+
+                    <p>
+                        Overall compliance health
+                    </p>
+
+                </div>
+
+
+                <div class="posture">
+
+                    <div class="posture-score">
+
+                        <div class="posture-circle">
+
+                            <div class="posture-number">
+                                78
+                            </div>
+
+                            <div class="posture-label">
+                                OUT OF 100
+                            </div>
+
+                        </div>
+
+                        <div class="posture-level">
+                            GOOD SECURITY POSTURE
+                        </div>
+
+                    </div>
+
+
+                    <div class="posture-row">
+
+                        <span>
+                            Access Control
+                        </span>
+
+                        <span>
+                            72%
+                        </span>
+
+                    </div>
+
+
+                    <div class="posture-row">
+
+                        <span>
+                            Data Protection
+                        </span>
+
+                        <span>
+                            81%
+                        </span>
+
+                    </div>
+
+
+                    <div class="posture-row">
+
+                        <span>
+                            Monitoring
+                        </span>
+
+                        <span>
+                            86%
+                        </span>
+
+                    </div>
+
+
+                    <div class="posture-row">
+
+                        <span>
+                            Configuration
+                        </span>
+
+                        <span>
+                            74%
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

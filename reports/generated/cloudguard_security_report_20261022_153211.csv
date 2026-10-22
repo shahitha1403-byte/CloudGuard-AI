@@ -1,0 +1,11 @@
+Risk ID,Resource,Risk,Severity,Risk Score,Status
+1,,Public Storage Bucket,Critical,95,Open
+2,,Encryption Disabled,High,82,Open
+3,,Security Logging Disabled,Medium,65,Open
+4,,Publicly Exposed Virtual Machine,High,85,Open
+5,,Open Management Port,Critical,92,Open
+6,,VM Monitoring Disabled,Medium,60,Open
+7,,Excessive IAM Permissions,Critical,94,Open
+8,,MFA Not Enabled,High,80,Open
+9,,Weak Password Policy,High,78,Open
+10,,Access Review Missing,Medium,62,Open

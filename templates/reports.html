@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Reports | CloudGuard AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #0b1120;
+            color: #e5e7eb;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 250px;
+            background: #111827;
+            border-right: 1px solid #263244;
+            padding: 25px 18px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            color: #ffffff;
+        }
+
+        .logo span {
+            color: #38bdf8;
+        }
+
+        .nav-title {
+            font-size: 11px;
+            color: #64748b;
+            margin: 20px 12px 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 14px;
+            margin: 5px 0;
+            text-decoration: none;
+            color: #94a3b8;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #1e293b;
+            color: white;
+        }
+
+        .nav-link.active {
+            background: #172554;
+            color: #38bdf8;
+            border-left: 3px solid #38bdf8;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 28px 35px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 27px;
+            color: white;
+        }
+
+        .topbar p {
+            color: #94a3b8;
+            margin-top: 6px;
+            font-size: 14px;
+        }
+
+        .status {
+            background: #052e2b;
+            color: #34d399;
+            padding: 9px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            border: 1px solid #065f46;
+        }
+
+        /* SUMMARY CARDS */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: #111827;
+            border: 1px solid #263244;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .card-title {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .card-value {
+            font-size: 29px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .card-small {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        /* SECTION */
+        .section {
+            background: #111827;
+            border: 1px solid #263244;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #263244;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+            color: white;
+        }
+
+        .section-header p {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* REPORT CARDS */
+        .report-grid {
+            padding: 22px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .report-card {
+            background: #0f172a;
+            border: 1px solid #293548;
+            border-radius: 10px;
+            padding: 20px;
+            transition: 0.2s;
+        }
+
+        .report-card:hover {
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+        }
+
+        .report-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 9px;
+            background: #172554;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .report-card h3 {
+            font-size: 15px;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .report-card p {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.5;
+            min-height: 54px;
+        }
+
+        .report-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 9px;
+            border: 1px solid #334155;
+            border-radius: 7px;
+            background: #1e293b;
+            color: #cbd5e1;
+            cursor: pointer;
+        }
+
+        .report-btn:hover {
+            background: #172554;
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+
+        /* TABLE */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #1e293b;
+            font-size: 13px;
+        }
+
+        th {
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        td {
+            color: #cbd5e1;
+        }
+
+        tr:hover {
+            background: #0f172a;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .success {
+            background: #052e2b;
+            color: #34d399;
+        }
+
+        .info {
+            background: #172554;
+            color: #38bdf8;
+        }
+
+        .warning {
+            background: #422006;
+            color: #fbbf24;
+        }
+
+        /* INSIGHTS */
+        .insights {
+            padding: 22px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .insight {
+            background: #0f172a;
+            border: 1px solid #293548;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .insight h3 {
+            font-size: 14px;
+            margin-bottom: 9px;
+            color: #e2e8f0;
+        }
+
+        .insight p {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        /* GENERATE */
+        .generate-box {
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .generate-text h3 {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 7px;
+        }
+
+        .generate-text p {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .generate-btn {
+            padding: 11px 20px;
+            border: none;
+            border-radius: 7px;
+            background: #0284c7;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .generate-btn:hover {
+            background: #0369a1;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) {
+            .summary-grid,
+            .report-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .insights {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 750px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+                padding: 20px;
+            }
+
+            .summary-grid,
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            🛡️ Cloud<span>Guard AI</span>
+        </div>
+
+        <div class="nav-title">Main</div>
+
+        <a href="/dashboard" class="nav-link">
+            📊 Dashboard
+        </a>
+
+        <a href="/resources" class="nav-link">
+            ☁️ Resources
+        </a>
+
+        <a href="/risks" class="nav-link">
+            ⚠️ Risk Monitoring
+        </a>
+
+        <a href="/ai-analysis" class="nav-link">
+            🤖 AI Analysis
+        </a>
+
+        <div class="nav-title">Security</div>
+
+        <a href="/compliance" class="nav-link">
+            ✓ Compliance
+        </a>
+
+        <a href="/remediation" class="nav-link">
+            🔧 Remediation
+        </a>
+
+        <a href="/reports" class="nav-link active">
+            📄 Reports
+        </a>
+
+        <a href="/audit" class="nav-link">
+            📋 Audit Logs
+        </a>
+
+        <div class="nav-title">System</div>
+
+        <a href="/" class="nav-link">
+            🚪 Logout
+        </a>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+
+            <div>
+                <h1>Security Reports</h1>
+                <p>Generate, analyze and monitor CloudGuard AI security reports</p>
+            </div>
+
+            <div class="status">
+                ● Report Engine Online
+            </div>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+        <div class="summary-grid">
+
+            <div class="card">
+                <div class="card-title">Total Resources</div>
+                <div class="card-value">24</div>
+                <div class="card-small">Cloud resources monitored</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Total Risks</div>
+                <div class="card-value">15</div>
+                <div class="card-small">Active security findings</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Critical Risks</div>
+                <div class="card-value">03</div>
+                <div class="card-small">Require immediate attention</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Security Posture</div>
+                <div class="card-value">78/100</div>
+                <div class="card-small">Overall cloud security score</div>
+            </div>
+
+        </div>
+
+
+        <!-- REPORT GENERATION -->
+        <section class="section">
+
+            <div class="section-header">
+                <div>
+                    <h2>Generate Security Report</h2>
+                    <p>Select a report type for your cloud security environment</p>
+                </div>
+            </div>
+
+            <div class="report-grid">
+
+                <div class="report-card">
+
+                    <div class="report-icon">📊</div>
+
+                    <h3>Executive Security Report</h3>
+
+                    <p>
+                        High-level security posture, major risks,
+                        trends and AI-generated executive insights.
+                    </p>
+
+                    <button class="report-btn">
+                        Generate Report
+                    </button>
+
+                </div>
+
+
+                <div class="report-card">
+
+                    <div class="report-icon">⚠️</div>
+
+                    <h3>Detailed Risk Report</h3>
+
+                    <p>
+                        Complete risk inventory with severity,
+                        risk scores, affected resources and analysis.
+                    </p>
+
+                    <button class="report-btn">
+                        Generate Report
+                    </button>
+
+                </div>
+
+
+                <div class="report-card">
+
+                    <div class="report-icon">✓</div>
+
+                    <h3>Compliance Report</h3>
+
+                    <p>
+                        Compliance status for CIS, ISO 27001 and
+                        GDPR security controls.
+                    </p>
+
+                    <button class="report-btn">
+                        Generate Report
+                    </button>
+
+                </div>
+
+
+                <div class="report-card">
+
+                    <div class="report-icon">🔧</div>
+
+                    <h3>Remediation Report</h3>
+
+                    <p>
+                        Remediation actions, administrator approvals,
+                        verification and risk reduction results.
+                    </p>
+
+                    <button class="report-btn">
+                        Generate Report
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPORT HISTORY -->
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Report History</h2>
+                    <p>Previously generated security reports</p>
+                </div>
+
+                <button class="generate-btn">
+                    + Generate New
+                </button>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Report ID</th>
+                            <th>Report Type</th>
+                            <th>Generated On</th>
+                            <th>Generated By</th>
+                            <th>Format</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>RPT-001</td>
+                            <td>Executive Security Report</td>
+                            <td>22 Oct 2026</td>
+                            <td>Admin</td>
+                            <td>PDF</td>
+                            <td>
+                                <span class="badge success">Generated</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>RPT-002</td>
+                            <td>Detailed Risk Report</td>
+                            <td>22 Oct 2026</td>
+                            <td>Admin</td>
+                            <td>PDF</td>
+                            <td>
+                                <span class="badge success">Generated</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>RPT-003</td>
+                            <td>Compliance Report</td>
+                            <td>21 Oct 2026</td>
+                            <td>Admin</td>
+                            <td>CSV</td>
+                            <td>
+                                <span class="badge info">Available</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>RPT-004</td>
+                            <td>Remediation Report</td>
+                            <td>21 Oct 2026</td>
+                            <td>Admin</td>
+                            <td>PDF</td>
+                            <td>
+                                <span class="badge success">Generated</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>RPT-005</td>
+                            <td>Risk Trend Report</td>
+                            <td>20 Oct 2026</td>
+                            <td>System</td>
+                            <td>CSV</td>
+                            <td>
+                                <span class="badge warning">Archived</span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- AI INSIGHTS -->
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>AI Security Insights</h2>
+                    <p>Automatically generated intelligence from security data</p>
+                </div>
+
+            </div>
+
+
+            <div class="insights">
+
+                <div class="insight">
+
+                    <h3>🔮 Risk Prediction</h3>
+
+                    <p>
+                        Current security data indicates a potential
+                        <strong>18% increase</strong> in cloud risk
+                        if unresolved critical findings remain active.
+                    </p>
+
+                </div>
+
+
+                <div class="insight">
+
+                    <h3>🎯 Highest Risk Area</h3>
+
+                    <p>
+                        Storage security currently represents the
+                        highest risk category because of public
+                        access configuration on production storage.
+                    </p>
+
+                </div>
+
+
+                <div class="insight">
+
+                    <h3>🛡️ Recommended Action</h3>
+
+                    <p>
+                        Prioritize public-access restriction,
+                        excessive permission review and security
+                        logging verification.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- EXPORT -->
+        <section class="section">
+
+            <div class="generate-box">
+
+                <div class="generate-text">
+
+                    <h3>Export Security Data</h3>
+
+                    <p>
+                        Export CloudGuard AI findings for analysis,
+                        auditing and documentation.
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <button class="generate-btn">
+                        Export PDF
+                    </button>
+
+                    <button class="generate-btn">
+                        Export CSV
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

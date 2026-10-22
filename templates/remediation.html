@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CloudGuard AI - Remediation</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #07111f;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            background: #0b1628;
+            border-right: 1px solid #203452;
+            padding: 25px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 12px 30px;
+            border-bottom: 1px solid #203452;
+        }
+
+        .brand-icon {
+            font-size: 30px;
+        }
+
+        .brand-text h2 {
+            font-size: 19px;
+        }
+
+        .brand-text p {
+            color: #7f91ad;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .menu {
+            margin-top: 25px;
+        }
+
+        .menu-title {
+            color: #657893;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin: 0 12px 12px;
+            letter-spacing: 1px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #9caac0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .menu a:hover {
+            background: #12223a;
+            color: white;
+        }
+
+        .menu a.active {
+            background: #17345c;
+            color: #4d9aff;
+        }
+
+        .menu-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .system-status {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            right: 20px;
+            background: #0f2035;
+            border: 1px solid #1d3858;
+            border-radius: 10px;
+            padding: 13px;
+        }
+
+        .system-status p {
+            font-size: 11px;
+            color: #7e91ad;
+        }
+
+        .status-line {
+            margin-top: 7px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: #53e39a;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            background: #53e39a;
+            border-radius: 50%;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 25px 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: #8293ac;
+            font-size: 13px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification {
+            width: 38px;
+            height: 38px;
+            border: 1px solid #243b5c;
+            background: #0c192d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #245da8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .admin-text {
+            font-size: 12px;
+        }
+
+        .admin-text span {
+            display: block;
+            color: #71839e;
+            margin-top: 3px;
+            font-size: 10px;
+        }
+
+        /* OVERVIEW */
+
+        .overview {
+            background: linear-gradient(135deg, #102746, #0c192d);
+            border: 1px solid #294d7d;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 22px;
+        }
+
+        .overview h2 {
+            font-size: 18px;
+            margin-bottom: 7px;
+        }
+
+        .overview p {
+            color: #8194ae;
+            font-size: 12px;
+            line-height: 1.6;
+            max-width: 800px;
+        }
+
+        /* WORKFLOW */
+
+        .workflow {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .step {
+            background: #0c192d;
+            border: 1px solid #203452;
+            border-radius: 10px;
+            padding: 16px 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            margin: 0 auto 9px;
+            border-radius: 50%;
+            background: #17385f;
+            color: #72aaff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .step.completed .step-number {
+            background: #164b38;
+            color: #55dd9b;
+        }
+
+        .step.active {
+            border-color: #347cff;
+            box-shadow: 0 0 15px rgba(52, 124, 255, .08);
+        }
+
+        .step h4 {
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+
+        .step p {
+            color: #71849d;
+            font-size: 9px;
+        }
+
+        /* GRID */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 20px;
+            margin-bottom: 22px;
+        }
+
+        .panel {
+            background: #0c192d;
+            border: 1px solid #203452;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #203452;
+        }
+
+        .panel-header h2 {
+            font-size: 16px;
+        }
+
+        .panel-header p {
+            color: #71849d;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        /* RISK */
+
+        .risk-details {
+            padding: 20px;
+        }
+
+        .risk-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 17px;
+        }
+
+        .risk-title h3 {
+            font-size: 15px;
+        }
+
+        .critical {
+            padding: 5px 9px;
+            border-radius: 5px;
+            background: rgba(255, 80, 90, .12);
+            color: #ff6871;
+            border: 1px solid rgba(255, 80, 90, .25);
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .detail {
+            background: #091525;
+            border: 1px solid #1c334f;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .detail-label {
+            color: #657b97;
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #d6deea;
+            font-size: 11px;
+        }
+
+        .description {
+            background: #091525;
+            border: 1px solid #1c334f;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 15px;
+        }
+
+        .description h4 {
+            font-size: 10px;
+            color: #7f94b0;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        .description p {
+            color: #bdc8d9;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* SCORE COMPARISON */
+
+        .score-comparison {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 22px;
+        }
+
+        .score-box {
+            text-align: center;
+        }
+
+        .score-box-label {
+            color: #71849e;
+            font-size: 10px;
+            margin-bottom: 8px;
+        }
+
+        .score-box-number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .before {
+            color: #ff626b;
+        }
+
+        .after {
+            color: #54d99a;
+        }
+
+        .arrow {
+            font-size: 28px;
+            color: #54708f;
+        }
+
+        /* APPROVAL */
+
+        .approval {
+            padding: 20px;
+        }
+
+        .approval-status {
+            background: #091525;
+            border: 1px solid #2b4260;
+            border-radius: 9px;
+            padding: 15px;
+            margin-bottom: 16px;
+        }
+
+        .approval-status-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+
+        .approval-status-top strong {
+            font-size: 12px;
+        }
+
+        .pending {
+            color: #f0c85d;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .approval-status p {
+            color: #71849d;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #9aaac0;
+            font-size: 10px;
+            margin-bottom: 7px;
+        }
+
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            background: #081323;
+            color: #d4deeb;
+            border: 1px solid #273f5d;
+            border-radius: 7px;
+            padding: 10px;
+            outline: none;
+            font-size: 11px;
+        }
+
+        .form-group textarea {
+            min-height: 75px;
+            resize: vertical;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 17px;
+        }
+
+        .approve-btn,
+        .reject-btn {
+            flex: 1;
+            padding: 11px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .approve-btn {
+            border: none;
+            background: #2878ff;
+            color: white;
+        }
+
+        .reject-btn {
+            background: transparent;
+            border: 1px solid #61313a;
+            color: #ff737b;
+        }
+
+        .approve-btn:hover {
+            opacity: .9;
+        }
+
+        .reject-btn:hover {
+            background: rgba(255, 80, 90, .08);
+        }
+
+        /* ACTIONS */
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .action-card {
+            background: #091525;
+            border: 1px solid #1c334f;
+            border-radius: 9px;
+            padding: 17px;
+        }
+
+        .action-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            background: #15365d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .action-card h4 {
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .action-card p {
+            color: #72859f;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        .action-status {
+            margin-top: 12px;
+            color: #54d99a;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        /* VERIFICATION */
+
+        .verification {
+            padding: 20px;
+        }
+
+        .verification-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid #1b2e49;
+        }
+
+        .verification-row:last-child {
+            border-bottom: none;
+        }
+
+        .check {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(75, 215, 150, .12);
+            color: #55d99a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .verification-text {
+            flex: 1;
+        }
+
+        .verification-text h4 {
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .verification-text p {
+            color: #71849d;
+            font-size: 9px;
+        }
+
+        .verified {
+            color: #54d99a;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1050px) {
+            .workflow {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 8px;
+            }
+
+            .brand-text,
+            .menu-title,
+            .menu a span,
+            .system-status {
+                display: none;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0 0 20px;
+            }
+
+            .menu a {
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 20px;
+            }
+
+            .workflow {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .workflow {
+                grid-template-columns: 1fr;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .score-comparison {
+                gap: 15px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .admin-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🛡️
+            </div>
+
+            <div class="brand-text">
+
+                <h2>CloudGuard AI</h2>
+
+                <p>
+                    INTELLIGENT CLOUD SECURITY
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="menu">
+
+            <div class="menu-title">
+                Main Menu
+            </div>
+
+            <a href="/dashboard">
+                <div class="menu-icon">📊</div>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/resources">
+                <div class="menu-icon">☁️</div>
+                <span>Resources</span>
+            </a>
+
+            <a href="/risks">
+                <div class="menu-icon">⚠️</div>
+                <span>Risk Monitoring</span>
+            </a>
+
+            <a href="/ai-analysis">
+                <div class="menu-icon">🤖</div>
+                <span>AI Analysis</span>
+            </a>
+
+            <a href="/compliance">
+                <div class="menu-icon">✓</div>
+                <span>Compliance</span>
+            </a>
+
+            <a href="/remediation" class="active">
+                <div class="menu-icon">🔧</div>
+                <span>Remediation</span>
+            </a>
+
+
+            <div class="menu-title" style="margin-top:25px;">
+                Management
+            </div>
+
+            <a href="/reports">
+                <div class="menu-icon">📄</div>
+                <span>Reports</span>
+            </a>
+
+            <a href="/audit">
+                <div class="menu-icon">📋</div>
+                <span>Audit Logs</span>
+            </a>
+
+            <a href="/">
+                <div class="menu-icon">🚪</div>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+
+        <div class="system-status">
+
+            <p>
+                PLATFORM STATUS
+            </p>
+
+            <div class="status-line">
+
+                <div class="status-dot"></div>
+
+                All Systems Operational
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <div class="topbar">
+
+            <div class="page-title">
+
+                <h1>
+                    Automated Remediation
+                </h1>
+
+                <p>
+                    Approve, execute and verify cloud security remediation
+                </p>
+
+            </div>
+
+
+            <div class="top-actions">
+
+                <div class="notification">
+                    🔔
+                </div>
+
+                <div class="admin">
+
+                    <div class="avatar">
+                        A
+                    </div>
+
+                    <div class="admin-text">
+
+                        Admin
+
+                        <span>
+                            Security Administrator
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- OVERVIEW -->
+
+        <div class="overview">
+
+            <h2>
+                🔧 AI-Powered Remediation Workflow
+            </h2>
+
+            <p>
+                CloudGuard AI converts detected security findings into
+                recommended corrective actions. Critical changes require
+                administrator approval before execution and verification.
+            </p>
+
+        </div>
+
+
+        <!-- WORKFLOW -->
+
+        <div class="workflow">
+
+            <div class="step completed">
+
+                <div class="step-number">
+                    ✓
+                </div>
+
+                <h4>
+                    Risk Detected
+                </h4>
+
+                <p>
+                    Security finding identified
+                </p>
+
+            </div>
+
+
+            <div class="step completed">
+
+                <div class="step-number">
+                    ✓
+                </div>
+
+                <h4>
+                    AI Analysis
+                </h4>
+
+                <p>
+                    Risk impact analyzed
+                </p>
+
+            </div>
+
+
+            <div class="step active">
+
+                <div class="step-number">
+                    03
+                </div>
+
+                <h4>
+                    Admin Approval
+                </h4>
+
+                <p>
+                    Authorization required
+                </p>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    04
+                </div>
+
+                <h4>
+                    Remediation
+                </h4>
+
+                <p>
+                    Security action executed
+                </p>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    05
+                </div>
+
+                <h4>
+                    Verification
+                </h4>
+
+                <p>
+                    Security state verified
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTENT -->
+
+        <div class="content-grid">
+
+
+            <!-- RISK DETAILS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Selected Risk
+                    </h2>
+
+                    <p>
+                        Security finding requiring remediation
+                    </p>
+
+                </div>
+
+
+                <div class="risk-details">
+
+                    <div class="risk-title">
+
+                        <h3>
+                            Public Storage Bucket
+                        </h3>
+
+                        <span class="critical">
+                            CRITICAL
+                        </span>
+
+                    </div>
+
+
+                    <div class="details-grid">
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Risk ID
+                            </div>
+
+                            <div class="detail-value">
+                                RISK-001
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Resource
+                            </div>
+
+                            <div class="detail-value">
+                                storage-prod-01
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Risk Score
+                            </div>
+
+                            <div class="detail-value">
+                                95 / 100
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <div class="detail-label">
+                                Detection
+                            </div>
+
+                            <div class="detail-value">
+                                Cloud Security Scan
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="description">
+
+                        <h4>
+                            Problem
+                        </h4>
+
+                        <p>
+                            The storage resource is configured for public
+                            access. Unauthorized users may be able to
+                            discover or access exposed objects.
+                        </p>
+
+                    </div>
+
+
+                    <div class="description">
+
+                        <h4>
+                            AI Recommended Solution
+                        </h4>
+
+                        <p>
+                            Disable public access, enforce authorized
+                            identity-based access and enable monitoring
+                            for the resource.
+                        </p>
+
+                    </div>
+
+
+                    <div class="description">
+
+                        <h4>
+                            Expected Result
+                        </h4>
+
+                        <p>
+                            Resource becomes private and the associated
+                            risk score should significantly decrease after
+                            successful verification.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- APPROVAL -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Admin Approval
+                    </h2>
+
+                    <p>
+                        Authorization before remediation
+                    </p>
+
+                </div>
+
+
+                <div class="approval">
+
+                    <div class="approval-status">
+
+                        <div class="approval-status-top">
+
+                            <strong>
+                                Remediation Status
+                            </strong>
+
+                            <span class="pending">
+                                ● PENDING APPROVAL
+                            </span>
+
+                        </div>
+
+                        <p>
+                            This action affects a critical cloud resource.
+                            Administrator approval is required before the
+                            remediation can proceed.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Approval Decision
+                        </label>
+
+                        <select>
+
+                            <option>
+                                Select decision
+                            </option>
+
+                            <option>
+                                Approve Remediation
+                            </option>
+
+                            <option>
+                                Reject Remediation
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Remediation Action
+                        </label>
+
+                        <select>
+
+                            <option>
+                                Disable Public Access
+                            </option>
+
+                            <option>
+                                Restrict IAM Permissions
+                            </option>
+
+                            <option>
+                                Enable Security Logging
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Administrator Note
+                        </label>
+
+                        <textarea
+                            placeholder="Enter approval or remediation notes..."></textarea>
+
+                    </div>
+
+
+                    <div class="button-row">
+
+                        <button class="approve-btn">
+                            ✓ Approve & Execute
+                        </button>
+
+                        <button class="reject-btn">
+                            ✕ Reject
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SCORE COMPARISON -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    Risk Score Impact
+                </h2>
+
+                <p>
+                    Expected security improvement after remediation
+                </p>
+
+            </div>
+
+
+            <div class="score-comparison">
+
+                <div class="score-box">
+
+                    <div class="score-box-label">
+                        BEFORE REMEDIATION
+                    </div>
+
+                    <div class="score-box-number before">
+                        95
+                    </div>
+
+                </div>
+
+
+                <div class="arrow">
+                    →
+                </div>
+
+
+                <div class="score-box">
+
+                    <div class="score-box-label">
+                        EXPECTED AFTER
+                    </div>
+
+                    <div class="score-box-number after">
+                        18
+                    </div>
+
+                </div>
+
+
+                <div class="arrow">
+                    =
+                </div>
+
+
+                <div class="score-box">
+
+                    <div class="score-box-label">
+                        RISK REDUCTION
+                    </div>
+
+                    <div class="score-box-number after">
+                        81%
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REMEDIATION ACTIONS -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    Remediation Actions
+                </h2>
+
+                <p>
+                    Actions generated from AI security recommendations
+                </p>
+
+            </div>
+
+
+            <div class="action-grid">
+
+
+                <div class="action-card">
+
+                    <div class="action-icon">
+                        🔒
+                    </div>
+
+                    <h4>
+                        Restrict Public Access
+                    </h4>
+
+                    <p>
+                        Change the resource access configuration from
+                        public to authorized users only.
+                    </p>
+
+                    <div class="action-status">
+                        ✓ READY FOR EXECUTION
+                    </div>
+
+                </div>
+
+
+                <div class="action-card">
+
+                    <div class="action-icon">
+                        👤
+                    </div>
+
+                    <h4>
+                        Review Permissions
+                    </h4>
+
+                    <p>
+                        Remove unnecessary identities and permissions
+                        according to least-privilege principles.
+                    </p>
+
+                    <div class="action-status">
+                        ✓ RECOMMENDED
+                    </div>
+
+                </div>
+
+
+                <div class="action-card">
+
+                    <div class="action-icon">
+                        📡
+                    </div>
+
+                    <h4>
+                        Enable Monitoring
+                    </h4>
+
+                    <p>
+                        Enable access logging and monitoring for future
+                        suspicious activity detection.
+                    </p>
+
+                    <div class="action-status">
+                        ✓ RECOMMENDED
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- VERIFICATION -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    Remediation Verification
+                </h2>
+
+                <p>
+                    Post-remediation security validation
+                </p>
+
+            </div>
+
+
+            <div class="verification">
+
+
+                <div class="verification-row">
+
+                    <div class="check">
+                        ✓
+                    </div>
+
+                    <div class="verification-text">
+
+                        <h4>
+                            Public Access Check
+                        </h4>
+
+                        <p>
+                            Resource access configuration validated
+                        </p>
+
+                    </div>
+
+                    <div class="verified">
+                        VERIFIED
+                    </div>
+
+                </div>
+
+
+                <div class="verification-row">
+
+                    <div class="check">
+                        ✓
+                    </div>
+
+                    <div class="verification-text">
+
+                        <h4>
+                            Permission Check
+                        </h4>
+
+                        <p>
+                            Identity permissions compared against baseline
+                        </p>
+
+                    </div>
+
+                    <div class="verified">
+                        VERIFIED
+                    </div>
+
+                </div>
+
+
+                <div class="verification-row">
+
+                    <div class="check">
+                        ✓
+                    </div>
+
+                    <div class="verification-text">
+
+                        <h4>
+                            Security Logging Check
+                        </h4>
+
+                        <p>
+                            Monitoring configuration validated
+                        </p>
+
+                    </div>
+
+                    <div class="verified">
+                        VERIFIED
+                    </div>
+
+                </div>
+
+
+                <div class="verification-row">
+
+                    <div class="check">
+                        ✓
+                    </div>
+
+                    <div class="verification-text">
+
+                        <h4>
+                            Risk Score Recalculation
+                        </h4>
+
+                        <p>
+                            Security posture recalculated after remediation
+                        </p>
+
+                    </div>
+
+                    <div class="verified">
+                        VERIFIED
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

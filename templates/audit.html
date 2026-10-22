@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Logs | CloudGuard AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #0b1120;
+            color: #e5e7eb;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 250px;
+            background: #111827;
+            border-right: 1px solid #263244;
+            padding: 25px 18px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            color: white;
+        }
+
+        .logo span {
+            color: #38bdf8;
+        }
+
+        .nav-title {
+            font-size: 11px;
+            color: #64748b;
+            margin: 20px 12px 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 14px;
+            margin: 5px 0;
+            text-decoration: none;
+            color: #94a3b8;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #1e293b;
+            color: white;
+        }
+
+        .nav-link.active {
+            background: #172554;
+            color: #38bdf8;
+            border-left: 3px solid #38bdf8;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 250px;
+            padding: 28px 35px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 27px;
+            color: white;
+        }
+
+        .topbar p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .status {
+            background: #052e2b;
+            color: #34d399;
+            border: 1px solid #065f46;
+            padding: 9px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        /* SUMMARY */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #111827;
+            border: 1px solid #263244;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .card-title {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .card-value {
+            color: white;
+            font-size: 29px;
+            font-weight: bold;
+        }
+
+        .card-small {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        /* SECTION */
+        .section {
+            background: #111827;
+            border: 1px solid #263244;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #263244;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h2 {
+            color: white;
+            font-size: 18px;
+        }
+
+        .section-header p {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* FILTER */
+        .filters {
+            padding: 18px 22px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #263244;
+        }
+
+        .search {
+            flex: 1;
+            min-width: 220px;
+            background: #0f172a;
+            color: white;
+            border: 1px solid #334155;
+            border-radius: 7px;
+            padding: 10px 13px;
+            outline: none;
+        }
+
+        .search:focus {
+            border-color: #38bdf8;
+        }
+
+        select {
+            background: #0f172a;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            border-radius: 7px;
+            padding: 10px 13px;
+            outline: none;
+        }
+
+        .filter-btn {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            border-radius: 7px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .filter-btn:hover {
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+
+        /* TABLE */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px 18px;
+            text-align: left;
+            border-bottom: 1px solid #1e293b;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        th {
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        td {
+            color: #cbd5e1;
+        }
+
+        tr:hover {
+            background: #0f172a;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .success {
+            background: #052e2b;
+            color: #34d399;
+        }
+
+        .warning {
+            background: #422006;
+            color: #fbbf24;
+        }
+
+        .danger {
+            background: #450a0a;
+            color: #f87171;
+        }
+
+        .info {
+            background: #172554;
+            color: #38bdf8;
+        }
+
+        /* AUDIT DETAIL */
+        .audit-grid {
+            padding: 22px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .audit-card {
+            background: #0f172a;
+            border: 1px solid #293548;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .audit-card h3 {
+            color: white;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid #1e293b;
+            font-size: 12px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #64748b;
+        }
+
+        .detail-value {
+            color: #cbd5e1;
+            text-align: right;
+        }
+
+        /* TIMELINE */
+        .timeline {
+            padding: 22px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            padding-bottom: 22px;
+            position: relative;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #38bdf8;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .timeline-item:not(:last-child)::before {
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 16px;
+            bottom: 0;
+            width: 1px;
+            background: #334155;
+        }
+
+        .timeline-content h4 {
+            color: #e2e8f0;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content p {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .timeline-time {
+            color: #475569;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        /* BUTTON */
+        .export-btn {
+            background: #0284c7;
+            border: none;
+            color: white;
+            padding: 10px 17px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .export-btn:hover {
+            background: #0369a1;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .audit-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 750px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                padding: 20px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            🛡️ Cloud<span>Guard AI</span>
+        </div>
+
+        <div class="nav-title">Main</div>
+
+        <a href="/dashboard" class="nav-link">
+            📊 Dashboard
+        </a>
+
+        <a href="/resources" class="nav-link">
+            ☁️ Resources
+        </a>
+
+        <a href="/risks" class="nav-link">
+            ⚠️ Risk Monitoring
+        </a>
+
+        <a href="/ai-analysis" class="nav-link">
+            🤖 AI Analysis
+        </a>
+
+        <div class="nav-title">Security</div>
+
+        <a href="/compliance" class="nav-link">
+            ✓ Compliance
+        </a>
+
+        <a href="/remediation" class="nav-link">
+            🔧 Remediation
+        </a>
+
+        <a href="/reports" class="nav-link">
+            📄 Reports
+        </a>
+
+        <a href="/audit" class="nav-link active">
+            📋 Audit Logs
+        </a>
+
+        <div class="nav-title">System</div>
+
+        <a href="/" class="nav-link">
+            🚪 Logout
+        </a>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+
+            <div>
+                <h1>Audit Logs</h1>
+                <p>Track security events, administrator actions and system activity</p>
+            </div>
+
+            <div class="status">
+                ● Audit Monitoring Active
+            </div>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+        <div class="summary-grid">
+
+            <div class="card">
+                <div class="card-title">Total Events</div>
+                <div class="card-value">1,248</div>
+                <div class="card-small">Recorded audit events</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Security Events</div>
+                <div class="card-value">326</div>
+                <div class="card-small">Security-related activities</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Admin Actions</div>
+                <div class="card-value">84</div>
+                <div class="card-small">Administrator activities</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Alerts</div>
+                <div class="card-value">12</div>
+                <div class="card-small">Events requiring attention</div>
+            </div>
+
+        </div>
+
+
+        <!-- AUDIT EVENTS -->
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Security Audit Events</h2>
+                    <p>Complete record of CloudGuard AI system activity</p>
+                </div>
+
+                <button class="export-btn">
+                    Export Logs
+                </button>
+
+            </div>
+
+
+            <!-- FILTERS -->
+            <div class="filters">
+
+                <input
+                    type="text"
+                    class="search"
+                    placeholder="Search audit events..."
+                >
+
+                <select>
+                    <option>All Event Types</option>
+                    <option>Authentication</option>
+                    <option>Risk Detection</option>
+                    <option>AI Analysis</option>
+                    <option>Remediation</option>
+                    <option>Compliance</option>
+                    <option>System</option>
+                </select>
+
+                <select>
+                    <option>All Severity</option>
+                    <option>Critical</option>
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                    <option>Info</option>
+                </select>
+
+                <button class="filter-btn">
+                    Apply Filter
+                </button>
+
+            </div>
+
+
+            <!-- TABLE -->
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Event ID</th>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Event</th>
+                            <th>Resource</th>
+                            <th>Severity</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>AUD-1001</td>
+                            <td>22 Oct 2026 18:05</td>
+                            <td>admin</td>
+                            <td>Risk Detected</td>
+                            <td>storage-prod-01</td>
+                            <td>
+                                <span class="badge danger">Critical</span>
+                            </td>
+                            <td>
+                                <span class="badge warning">Open</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>AUD-1002</td>
+                            <td>22 Oct 2026 18:07</td>
+                            <td>AI Engine</td>
+                            <td>AI Risk Analysis</td>
+                            <td>RISK-001</td>
+                            <td>
+                                <span class="badge danger">Critical</span>
+                            </td>
+                            <td>
+                                <span class="badge success">Completed</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>AUD-1003</td>
+                            <td>22 Oct 2026 18:12</td>
+                            <td>admin</td>
+                            <td>Remediation Approved</td>
+                            <td>storage-prod-01</td>
+                            <td>
+                                <span class="badge warning">High</span>
+                            </td>
+                            <td>
+                                <span class="badge success">Approved</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>AUD-1004</td>
+                            <td>22 Oct 2026 18:14</td>
+                            <td>System</td>
+                            <td>Remediation Executed</td>
+                            <td>storage-prod-01</td>
+                            <td>
+                                <span class="badge info">Info</span>
+                            </td>
+                            <td>
+                                <span class="badge success">Success</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>AUD-1005</td>
+                            <td>22 Oct 2026 18:16</td>
+                            <td>System</td>
+                            <td>Verification Completed</td>
+                            <td>RISK-001</td>
+                            <td>
+                                <span class="badge info">Info</span>
+                            </td>
+                            <td>
+                                <span class="badge success">Verified</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>AUD-1006</td>
+                            <td>22 Oct 2026 18:20</td>
+                            <td>admin</td>
+                            <td>Compliance Scan</td>
+                            <td>Cloud Environment</td>
+                            <td>
+                                <span class="badge warning">Medium</span>
+                            </td>
+                            <td>
+                                <span class="badge success">Completed</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>AUD-1007</td>
+                            <td>22 Oct 2026 18:25</td>
+                            <td>AI Engine</td>
+                            <td>Anomaly Detected</td>
+                            <td>vm-production-03</td>
+                            <td>
+                                <span class="badge warning">High</span>
+                            </td>
+                            <td>
+                                <span class="badge warning">Investigating</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>AUD-1008</td>
+                            <td>22 Oct 2026 18:31</td>
+                            <td>admin</td>
+                            <td>Report Generated</td>
+                            <td>RPT-001</td>
+                            <td>
+                                <span class="badge info">Info</span>
+                            </td>
+                            <td>
+                                <span class="badge success">Generated</span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- AUDIT DETAILS -->
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Audit System Information</h2>
+                    <p>Audit logging and monitoring configuration</p>
+                </div>
+
+            </div>
+
+
+            <div class="audit-grid">
+
+                <div class="audit-card">
+
+                    <h3>📋 Logging Configuration</h3>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Audit Logging</span>
+                        <span class="detail-value">Enabled</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Log Retention</span>
+                        <span class="detail-value">365 Days</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Real-Time Monitoring</span>
+                        <span class="detail-value">Enabled</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Tamper Detection</span>
+                        <span class="detail-value">Enabled</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Automatic Backup</span>
+                        <span class="detail-value">Enabled</span>
+                    </div>
+
+                </div>
+
+
+                <div class="audit-card">
+
+                    <h3>🔐 Security Controls</h3>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Authentication Logs</span>
+                        <span class="detail-value">Active</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Admin Activity</span>
+                        <span class="detail-value">Monitored</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Remediation Actions</span>
+                        <span class="detail-value">Tracked</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">AI Decisions</span>
+                        <span class="detail-value">Recorded</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Compliance Events</span>
+                        <span class="detail-value">Tracked</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACTIVITY TIMELINE -->
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Recent Security Activity</h2>
+                    <p>Latest events detected by CloudGuard AI</p>
+                </div>
+
+            </div>
+
+
+            <div class="timeline">
+
+                <div class="timeline-item">
+
+                    <div class="timeline-dot"></div>
+
+                    <div class="timeline-content">
+
+                        <h4>Critical Risk Detected</h4>
+
+                        <p>
+                            Public storage access was detected on
+                            <strong>storage-prod-01</strong>.
+                        </p>
+
+                        <div class="timeline-time">
+                            18:05 — System Scanner
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-item">
+
+                    <div class="timeline-dot"></div>
+
+                    <div class="timeline-content">
+
+                        <h4>AI Risk Analysis Completed</h4>
+
+                        <p>
+                            AI engine analyzed the risk and generated
+                            impact prediction and remediation recommendations.
+                        </p>
+
+                        <div class="timeline-time">
+                            18:07 — AI Security Engine
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-item">
+
+                    <div class="timeline-dot"></div>
+
+                    <div class="timeline-content">
+
+                        <h4>Administrator Approval Recorded</h4>
+
+                        <p>
+                            Administrator approved the recommended
+                            remediation action for RISK-001.
+                        </p>
+
+                        <div class="timeline-time">
+                            18:12 — Admin
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-item">
+
+                    <div class="timeline-dot"></div>
+
+                    <div class="timeline-content">
+
+                        <h4>Remediation Verified</h4>
+
+                        <p>
+                            Public access restriction was successfully
+                            verified and the risk score was recalculated.
+                        </p>
+
+                        <div class="timeline-time">
+                            18:16 — Verification Engine
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="timeline-item">
+
+                    <div class="timeline-dot"></div>
+
+                    <div class="timeline-content">
+
+                        <h4>Security Report Generated</h4>
+
+                        <p>
+                            Executive security report generated successfully
+                            and stored in the report history.
+                        </p>
+
+                        <div class="timeline-time">
+                            18:31 — Reporting Engine
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

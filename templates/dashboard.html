@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CloudGuard AI - Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .layout {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: #111827;
+            color: white;
+            padding: 25px 15px;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: bold;
+            padding: 10px 15px 30px;
+        }
+
+        .logo span {
+            color: #60a5fa;
+        }
+
+        .menu a {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            color: #d1d5db;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .logout {
+            position: absolute;
+            left: 15px;
+            right: 15px;
+            bottom: 25px;
+        }
+
+        .logout a {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            background: #dc2626;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .topbar p {
+            color: #64748b;
+        }
+
+        .user-box {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .online {
+            color: #16a34a;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        /* STAT CARDS */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .card-title {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .card-number {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .blue {
+            color: #2563eb;
+        }
+
+        .red {
+            color: #dc2626;
+        }
+
+        .orange {
+            color: #ea580c;
+        }
+
+        .yellow {
+            color: #d97706;
+        }
+
+        .green {
+            color: #16a34a;
+        }
+
+        /* PANELS */
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .panel h2 {
+            font-size: 19px;
+            margin-bottom: 20px;
+        }
+
+        /* RISK ITEMS */
+
+        .risk-item {
+            margin-bottom: 20px;
+        }
+
+        .risk-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .risk-bar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .risk-fill {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .critical-fill {
+            background: #dc2626;
+        }
+
+        .high-fill {
+            background: #ea580c;
+        }
+
+        .medium-fill {
+            background: #d97706;
+        }
+
+        .low-fill {
+            background: #16a34a;
+        }
+
+        /* ACTIONS */
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .action {
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #1f2937;
+            background: #f8fafc;
+            font-weight: bold;
+        }
+
+        .action:hover {
+            background: #eff6ff;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        /* STATUS */
+
+        .status-box {
+            margin-top: 25px;
+            padding: 18px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+        }
+
+        .status-box strong {
+            color: #15803d;
+        }
+
+        .status-box p {
+            margin-top: 7px;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1200px) {
+            .cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 210px;
+            }
+
+            .main {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+            }
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                display: block;
+            }
+
+            .user-box {
+                margin-top: 15px;
+            }
+
+            .logout {
+                position: relative;
+                left: auto;
+                right: auto;
+                bottom: auto;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            🛡️ Cloud<span>Guard AI</span>
+        </div>
+
+        <div class="menu">
+
+            <a href="/dashboard" class="active">
+                🏠 Dashboard
+            </a>
+
+            <a href="/resources">
+                ☁️ Cloud Resources
+            </a>
+
+            <a href="/risks">
+                ⚠️ Risk Monitoring
+            </a>
+
+            <a href="/security-scan">
+                🔍 Security Scan
+            </a>
+
+            <a href="/ai-analysis">
+                🤖 AI Risk Analysis
+            </a>
+
+            <a href="/compliance">
+                📋 Compliance
+            </a>
+
+            <a href="/remediation">
+                🛠️ Remediation
+            </a>
+
+            <a href="/reports">
+                📊 Reports
+            </a>
+
+            <a href="/audit">
+                📝 Audit Logs
+            </a>
+
+            <a href="/backup">
+                💾 Backup & Recovery
+            </a>
+
+        </div>
+
+        <div class="logout">
+            <a href="/logout">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <div class="topbar">
+
+            <div>
+                <h1>AI Security Dashboard</h1>
+                <p>Cloud Security Posture & Risk Monitoring</p>
+            </div>
+
+            <div class="user-box">
+                👤 {{ username }}
+                <span class="online">● Online</span>
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="cards">
+
+            <div class="card">
+                <div class="card-title">
+                    Total Resources
+                </div>
+
+                <div class="card-number blue">
+                    {{ statistics.get('total_resources', 0) }}
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">
+                    Total Risks
+                </div>
+
+                <div class="card-number red">
+                    {{ statistics.get('total_risks', 0) }}
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">
+                    Critical Risks
+                </div>
+
+                <div class="card-number red">
+                    {{ statistics.get('critical', 0) }}
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">
+                    High Risks
+                </div>
+
+                <div class="card-number orange">
+                    {{ statistics.get('high', 0) }}
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">
+                    Medium Risks
+                </div>
+
+                <div class="card-number yellow">
+                    {{ statistics.get('medium', 0) }}
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- CONTENT -->
+
+        <div class="grid">
+
+            <!-- RISK OVERVIEW -->
+
+            <div class="panel">
+
+                <h2>⚠️ Risk Overview</h2>
+
+                <div class="risk-item">
+
+                    <div class="risk-header">
+                        <span>Critical Risks</span>
+
+                        <strong>
+                            {{ statistics.get('critical', 0) }}
+                        </strong>
+                    </div>
+
+                    <div class="risk-bar">
+                        <div
+                            class="risk-fill critical-fill"
+                            style="width: 90%;">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="risk-item">
+
+                    <div class="risk-header">
+                        <span>High Risks</span>
+
+                        <strong>
+                            {{ statistics.get('high', 0) }}
+                        </strong>
+                    </div>
+
+                    <div class="risk-bar">
+                        <div
+                            class="risk-fill high-fill"
+                            style="width: 70%;">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="risk-item">
+
+                    <div class="risk-header">
+                        <span>Medium Risks</span>
+
+                        <strong>
+                            {{ statistics.get('medium', 0) }}
+                        </strong>
+                    </div>
+
+                    <div class="risk-bar">
+                        <div
+                            class="risk-fill medium-fill"
+                            style="width: 50%;">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="risk-item">
+
+                    <div class="risk-header">
+                        <span>Low / Safe</span>
+
+                        <strong>
+                            {{ statistics.get('low', 0) }}
+                        </strong>
+                    </div>
+
+                    <div class="risk-bar">
+                        <div
+                            class="risk-fill low-fill"
+                            style="width: 30%;">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY OPERATIONS -->
+
+            <div class="panel">
+
+                <h2>🚀 Security Operations</h2>
+
+                <div class="actions">
+
+                    <a href="/resources" class="action">
+                        ☁️ Cloud Resources
+                    </a>
+
+                    <a href="/risks" class="action">
+                        ⚠️ Risk Monitoring
+                    </a>
+
+                    <a href="/security-scan" class="action">
+                        🔍 Security Scan
+                    </a>
+
+                    <a href="/ai-analysis" class="action">
+                        🤖 AI Analysis
+                    </a>
+
+                    <a href="/compliance" class="action">
+                        📋 Compliance
+                    </a>
+
+                    <a href="/remediation" class="action">
+                        🛠️ Remediation
+                    </a>
+
+                    <a href="/reports" class="action">
+                        📊 Reports
+                    </a>
+
+                    <a href="/audit" class="action">
+                        📝 Audit Logs
+                    </a>
+
+                    <a href="/backup" class="action">
+                        💾 Backup & Recovery
+                    </a>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <strong>
+                        ✓ Security Monitoring Active
+                    </strong>
+
+                    <p>
+                        CloudGuard AI is monitoring authorized
+                        cloud resources and tracking security risks.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer">
+            CloudGuard AI © 2026 |
+            Intelligent Cloud Security Posture Management
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

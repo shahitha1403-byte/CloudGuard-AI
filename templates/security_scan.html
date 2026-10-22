@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Scan - CloudGuard AI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .online {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .scan-card {
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            max-width: 900px;
+        }
+
+        .scan-card h2 {
+            margin-bottom: 10px;
+        }
+
+        .scan-card p {
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+
+        .scan-button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .scan-button:hover {
+            background: #1d4ed8;
+        }
+
+        .status {
+            margin-top: 25px;
+            padding: 18px;
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            border-radius: 8px;
+        }
+
+        .results {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .result-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .result-card h3 {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .result-card strong {
+            font-size: 30px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            .results {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🔍 CloudGuard AI - Security Scan</h1>
+        <div class="online">● System Online</div>
+    </div>
+
+    <div class="container">
+
+        <a href="/dashboard" class="back">← Back to Dashboard</a>
+
+        <div class="scan-card">
+
+            <h2>Continuous Security Scan</h2>
+
+            <p>
+                Scan authorized cloud resources and identify
+                security misconfigurations, vulnerabilities and risks.
+            </p>
+
+            <form method="POST" action="/security-scan">
+                <button type="submit" class="scan-button">
+                    🔍 Start Security Scan
+                </button>
+            </form>
+
+            {% if scan_completed %}
+                <div class="status">
+                    ✅ Security scan completed successfully.
+                </div>
+
+                <div class="results">
+
+                    <div class="result-card">
+                        <h3>Resources Scanned</h3>
+                        <strong>{{ resources_scanned }}</strong>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Risks Detected</h3>
+                        <strong>{{ risks_detected }}</strong>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Scan Status</h3>
+                        <strong>✓</strong>
+                    </div>
+
+                </div>
+            {% else %}
+
+                <div class="status">
+                    ℹ️ No scan has been started yet. Click the button above.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="footer">
+            CloudGuard AI © 2026 | Intelligent Cloud Security Posture Management
+        </div>
+
+    </div>
+
+</body>
+</html>
